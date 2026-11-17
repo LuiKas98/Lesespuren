@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lesespuren von Herr Kastner</title>
+<style>
+  :root {
+    --bg: #fbfaf7;
+    --text: #1f2a37;
+    --muted: #5b6673;
+    --accent: #2563eb;
+    --accent-text: #ffffff;
+    --line: #d9dde3;
+    --surface: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141a22;
+      --text: #f1f3f6;
+      --muted: #a5afbb;
+      --accent: #6ea0ff;
+      --accent-text: #0e1624;
+      --line: #2e3844;
+      --surface: #1b232d;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Nunito", "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .view { display: none; min-height: 100%; padding: 24px; }
+  .view.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+  h1 {
+    font-size: clamp(2.2rem, 7vw, 4.5rem);
+    line-height: 1.1;
+    margin: 0 0 40px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; }
+  .label { font-size: clamp(1.3rem, 4vw, 1.8rem); color: var(--muted); font-weight: 600; }
+
+  .btn {
+    font: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding: 16px 32px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-text);
+    cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible, .home:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+
+  .home {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    left: 16px;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 0;
+  }
+  .home svg { width: 26px; height: 26px; }
+  body.on-story .home { display: flex; }
+
+  #story h2 { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0 0 32px; font-weight: 800; }
+  .progress { color: var(--muted); font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
+  .passage {
+    max-width: 36ch;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    line-height: 1.6;
+    margin: 0 0 40px;
+    min-height: 6em;
+  }
+  .btn.ghost { background: transparent; color: var(--text); border: 2px solid var(--line); }
+  .btn[hidden] { display: none; }
+</style>
+</head>
+<body>
+
+<button class="home" id="homeBtn" aria-label="Zur Startseite" title="Zur Startseite">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 11.5 12 4l9 7.5"/>
+    <path d="M5.5 10v9.5h13V10"/>
+    <path d="M10 19.5v-5h4v5"/>
+  </svg>
+</button>
+
+<main>
+  <section class="view active" id="start">
+    <h1>Lesespuren von Herr Kastner</h1>
+    <div class="row">
+      <button class="btn" id="goStory">Zur Lesespur</button>
+      <span class="label">Weihnachtsgeschichte</span>
+    </div>
+  </section>
+
+  <section class="view" id="story">
+    <h2>Test der Lesespur Weihnachten</h2>
+    <div class="progress" id="progress" aria-live="polite"></div>
+    <p class="passage" id="passage"></p>
+    <div class="row">
+      <button class="btn ghost" id="prevBtn">Zurück</button>
+      <button class="btn" id="nextBtn">Weiter</button>
+    </div>
+  </section>
+</main>
+
+<script>
+  var views = { start: document.getElementById('start'), story: document.getElementById('story') };
+
+  // Hier die Textabschnitte der Geschichte eintragen (beliebig viele).
+  var passages = [
+    'Hier steht der erste Textabschnitt der Weihnachtsgeschichte.',
+    'Hier steht der zweite Textabschnitt.',
+    'Hier steht der dritte Textabschnitt.'
+  ];
+  var current = 0;
+  var passageEl = document.getElementById('passage');
+  var progressEl = document.getElementById('progress');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+
+  function renderPassage() {
+    passageEl.textContent = passages[current];
+    progressEl.textContent = 'Abschnitt ' + (current + 1) + ' von ' + passages.length;
+    prevBtn.hidden = current === 0;
+    nextBtn.textContent = current === passages.length - 1 ? 'Fertig' : 'Weiter';
+  }
+
+  nextBtn.addEventListener('click', function () {
+    if (current < passages.length - 1) { current++; renderPassage(); }
+    else { show('start'); }
+  });
+  prevBtn.addEventListener('click', function () {
+    if (current > 0) { current--; renderPassage(); }
+  });
+
+  function show(name) {
+    if (name === 'story') { current = 0; renderPassage(); }
+    for (var key in views) views[key].classList.toggle('active', key === name);
+    document.body.classList.toggle('on-story', name === 'story');
+    window.scrollTo(0, 0);
+    try { history.replaceState(null, '', name === 'story' ? '#lesespur' : location.pathname); } catch (e) {}
+  }
+
+  document.getElementById('goStory').addEventListener('click', function () { show('story'); });
+  document.getElementById('homeBtn').addEventListener('click', function () { show('start'); });
+  window.addEventListener('hashchange', function () { show(location.hash === '#lesespur' ? 'story' : 'start'); });
+  if (location.hash === '#lesespur') show('story');
+</script>
+</body>
+</html>
