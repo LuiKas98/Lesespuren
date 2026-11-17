@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lesespuren von Herr Kastner</title>
+<title>Herr Kastners Lernseite</title>
 <style>
   :root {
     --bg: #fbfaf7;
@@ -34,38 +34,77 @@
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  .view { display: none; min-height: 100%; padding: 24px; }
-  .view.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .view { display: none; min-height: 100%; padding: 32px 24px; }
+  .view.active { display: block; }
+  .view.center.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+  /* ---------- Startseite ---------- */
+  .page { max-width: 960px; margin: 0 auto; }
 
   h1 {
-    font-size: clamp(2.2rem, 7vw, 4.5rem);
+    font-size: clamp(2rem, 6vw, 3.6rem);
     line-height: 1.1;
-    margin: 0 0 40px;
+    margin: 8px 0 56px;
     font-weight: 800;
+    text-align: center;
     letter-spacing: -0.01em;
   }
-  .row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; }
-  .label { font-size: clamp(1.3rem, 4vw, 1.8rem); color: var(--muted); font-weight: 600; }
+
+  .section-title {
+    display: flex; align-items: center; gap: 14px;
+    font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+    font-weight: 800;
+    margin: 0 0 24px;
+    text-align: left;
+  }
+  .section-title svg { width: 40px; height: 40px; flex: 0 0 auto; color: var(--accent); }
+
+  .track {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start;
+    gap: 24px 32px;
+    padding: 20px;
+    background: var(--surface);
+    border: 2px solid var(--line);
+    border-radius: 24px;
+  }
+  .track-img { width: min(100%, 300px); height: auto; flex: 0 0 auto; border-radius: 16px; display: block; }
+  .track-body { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 20px 28px; }
+  .track-title { margin: 0; font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; }
 
   .btn {
     font: inherit;
     font-size: 1.3rem;
     font-weight: 700;
-    padding: 16px 32px;
+    min-height: 56px;
+    padding: 14px 32px;
     border: 0;
     border-radius: 999px;
     background: var(--accent);
     color: var(--accent-text);
     cursor: pointer;
+    touch-action: manipulation;
   }
   .btn:hover { filter: brightness(1.08); }
   .btn:focus-visible, .home:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+  .btn.ghost { background: transparent; color: var(--text); border: 2px solid var(--line); }
+  .btn[hidden] { display: none; }
+
+  /* ---------- Lesespur ---------- */
+  .story-page { max-width: 760px; margin: 0 auto; padding-top: 64px; }
+  #story h2 { font-size: clamp(1.8rem, 5vw, 2.8rem); margin: 0 0 28px; font-weight: 800; line-height: 1.15; text-align: left; }
+  .chapter p { font-size: clamp(1.25rem, 3.6vw, 1.6rem); line-height: 1.7; margin: 0 0 18px; max-width: 42ch; text-align: left; }
+  .chapter p.note { border-left: 5px solid var(--accent); padding-left: 16px; font-style: italic; }
+  .chapter p.question { font-weight: 800; margin-top: 30px; }
+  .chapter p.end { font-size: clamp(1.8rem, 6vw, 2.4rem); font-weight: 800; margin-top: 30px; }
+  .choices { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 8px; }
+  .choices .btn { text-align: left; font-size: 1.2rem; line-height: 1.3; border-radius: 20px; }
+  .back-row { margin-top: 36px; }
 
   .home {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + 16px);
     left: 16px;
-    width: 52px; height: 52px;
+    width: 56px; height: 56px;
     border-radius: 50%;
     border: 2px solid var(--line);
     background: var(--surface);
@@ -75,20 +114,8 @@
     align-items: center; justify-content: center;
     padding: 0;
   }
-  .home svg { width: 26px; height: 26px; }
+  .home svg { width: 28px; height: 28px; }
   body.on-story .home { display: flex; }
-
-  #story h2 { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0 0 32px; font-weight: 800; }
-  .progress { color: var(--muted); font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; }
-  .passage {
-    max-width: 36ch;
-    font-size: clamp(1.4rem, 4vw, 2rem);
-    line-height: 1.6;
-    margin: 0 0 40px;
-    min-height: 6em;
-  }
-  .btn.ghost { background: transparent; color: var(--text); border: 2px solid var(--line); }
-  .btn[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -103,20 +130,104 @@
 
 <main>
   <section class="view active" id="start">
-    <h1>Lesespuren von Herr Kastner</h1>
-    <div class="row">
-      <button class="btn" id="goStory">Zur Lesespur</button>
-      <span class="label">Weihnachtsgeschichte</span>
+    <div class="page">
+      <h1>Herr Kastners Lernseite</h1>
+
+      <h2 class="section-title">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M24 12c-4-3-10-4-17-3v27c7-1 13 0 17 3 4-3 10-4 17-3V9c-7-1-13 0-17 3Z"/>
+          <path d="M24 12v27"/>
+          <path d="M12 17c3 0 5 .3 8 1.5M12 24c3 0 5 .3 8 1.5M36 17c-3 0-5 .3-8 1.5M36 24c-3 0-5 .3-8 1.5"/>
+        </svg>
+        Lesespuren
+      </h2>
+
+      <article class="track">
+        <svg class="track-img" viewBox="0 0 400 300" role="img" aria-label="Gemalter Weihnachtsbaum mit Geschenken und zwei Kindern im Schnee">
+          <rect width="400" height="300" fill="#cfe6f7"/>
+          <circle cx="60" cy="45" r="22" fill="#fff6c9"/>
+          <circle cx="60" cy="45" r="30" fill="#fff6c9" opacity=".4"/>
+          <path d="M0 232 Q100 208 200 226 T400 222 V300 H0Z" fill="#f6fbff"/>
+          <path d="M0 262 Q120 244 240 258 T400 254 V300 H0Z" fill="#e6f1fa"/>
+
+          <!-- Schneeflocken -->
+          <g fill="#ffffff" opacity=".95">
+            <circle cx="30" cy="100" r="4"/><circle cx="110" cy="40" r="3"/><circle cx="150" cy="80" r="4"/>
+            <circle cx="260" cy="48" r="4"/><circle cx="305" cy="95" r="3"/><circle cx="370" cy="60" r="4"/>
+            <circle cx="345" cy="130" r="3"/><circle cx="25" cy="170" r="3"/><circle cx="240" cy="25" r="3"/>
+          </g>
+
+          <!-- Tannenbaum -->
+          <rect x="190" y="205" width="20" height="28" rx="3" fill="#8b5a2b"/>
+          <g stroke="#1f6b39" stroke-width="3" stroke-linejoin="round">
+            <polygon points="200,122 122,212 278,212" fill="#2f8f4e"/>
+            <polygon points="200,88 142,166 258,166" fill="#3aa35c"/>
+            <polygon points="200,58 160,120 240,120" fill="#2f8f4e"/>
+          </g>
+          <polygon points="200,36 205,49 218,49 207,57 211,70 200,62 189,70 193,57 182,49 195,49" fill="#ffd23f" stroke="#e0a800" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="188" cy="102" r="6" fill="#e5484d"/>
+          <circle cx="214" cy="112" r="5" fill="#ffd23f"/>
+          <circle cx="178" cy="150" r="6" fill="#3b82f6"/>
+          <circle cx="222" cy="146" r="6" fill="#e5484d"/>
+          <circle cx="158" cy="192" r="6" fill="#ffd23f"/>
+          <circle cx="200" cy="180" r="6" fill="#a855f7"/>
+          <circle cx="246" cy="194" r="6" fill="#3b82f6"/>
+
+          <!-- Geschenke -->
+          <g stroke="#00000022" stroke-width="2">
+            <rect x="138" y="214" width="38" height="30" rx="3" fill="#e5484d"/>
+            <rect x="154" y="214" width="6" height="30" fill="#ffd23f"/>
+            <rect x="138" y="226" width="38" height="6" fill="#ffd23f"/>
+            <rect x="184" y="222" width="32" height="22" rx="3" fill="#3b82f6"/>
+            <rect x="196" y="222" width="6" height="22" fill="#fff3b0"/>
+            <rect x="184" y="230" width="32" height="5" fill="#fff3b0"/>
+            <rect x="224" y="208" width="36" height="36" rx="3" fill="#a855f7"/>
+            <rect x="239" y="208" width="6" height="36" fill="#ffd23f"/>
+            <rect x="224" y="223" width="36" height="6" fill="#ffd23f"/>
+          </g>
+
+          <!-- Kind links -->
+          <ellipse cx="70" cy="249" rx="28" ry="6" fill="#c9dcec"/>
+          <rect x="57" y="228" width="12" height="20" rx="4" fill="#3b3b6b"/>
+          <rect x="73" y="228" width="12" height="20" rx="4" fill="#3b3b6b"/>
+          <path d="M52 192 L38 208 M88 192 L112 206" stroke="#f59e0b" stroke-width="9" stroke-linecap="round"/>
+          <rect x="50" y="176" width="40" height="58" rx="16" fill="#f59e0b"/>
+          <circle cx="70" cy="160" r="18" fill="#fcd9b6"/>
+          <path d="M52 157 A18 18 0 0 1 88 157 Z" fill="#e5484d"/>
+          <rect x="50" y="154" width="40" height="6" rx="3" fill="#ffffff"/>
+          <circle cx="70" cy="136" r="6" fill="#ffffff"/>
+          <circle cx="63" cy="164" r="2.2" fill="#333"/><circle cx="77" cy="164" r="2.2" fill="#333"/>
+          <path d="M63 170 Q70 176 77 170" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="58" cy="169" r="3" fill="#f9a8a8" opacity=".7"/><circle cx="82" cy="169" r="3" fill="#f9a8a8" opacity=".7"/>
+
+          <!-- Kind rechts -->
+          <ellipse cx="330" cy="251" rx="28" ry="6" fill="#c9dcec"/>
+          <rect x="317" y="230" width="12" height="20" rx="4" fill="#2d4a7a"/>
+          <rect x="333" y="230" width="12" height="20" rx="4" fill="#2d4a7a"/>
+          <path d="M312 196 L292 212 M348 196 L358 184" stroke="#3b82f6" stroke-width="9" stroke-linecap="round"/>
+          <rect x="310" y="182" width="40" height="52" rx="16" fill="#3b82f6"/>
+          <rect x="316" y="182" width="28" height="9" rx="4" fill="#e5484d"/>
+          <circle cx="330" cy="166" r="18" fill="#fcd9b6"/>
+          <path d="M312 164 A18 18 0 0 1 348 164 Q330 152 312 164 Z" fill="#7c4a1e"/>
+          <circle cx="324" cy="170" r="2.2" fill="#333"/><circle cx="336" cy="170" r="2.2" fill="#333"/>
+          <path d="M324 176 Q330 181 336 176" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="318" cy="175" r="3" fill="#f9a8a8" opacity=".7"/><circle cx="342" cy="175" r="3" fill="#f9a8a8" opacity=".7"/>
+        </svg>
+
+        <div class="track-body">
+          <h3 class="track-title">Weihnachten</h3>
+          <button class="btn" id="goStory">Zur Lesespur</button>
+        </div>
+      </article>
     </div>
   </section>
 
   <section class="view" id="story">
-    <h2>Test der Lesespur Weihnachten</h2>
-    <div class="progress" id="progress" aria-live="polite"></div>
-    <p class="passage" id="passage"></p>
-    <div class="row">
-      <button class="btn ghost" id="prevBtn">Zurück</button>
-      <button class="btn" id="nextBtn">Weiter</button>
+    <div class="story-page">
+      <h2 id="chapterTitle"></h2>
+      <div class="chapter" id="chapterText"></div>
+      <div class="choices" id="choices"></div>
+      <div class="back-row"><button class="btn ghost" id="prevBtn" hidden>Zurück</button></div>
     </div>
   </section>
 </main>
@@ -124,39 +235,175 @@
 <script>
   var views = { start: document.getElementById('start'), story: document.getElementById('story') };
 
-  // Hier die Textabschnitte der Geschichte eintragen (beliebig viele).
-  var passages = [
-    'Hier steht der erste Textabschnitt der Weihnachtsgeschichte.',
-    'Hier steht der zweite Textabschnitt.',
-    'Hier steht der dritte Textabschnitt.'
-  ];
-  var current = 0;
-  var passageEl = document.getElementById('passage');
-  var progressEl = document.getElementById('progress');
-  var prevBtn = document.getElementById('prevBtn');
-  var nextBtn = document.getElementById('nextBtn');
+  // Die Geschichte: Jedes Kapitel hat Titel, Text (Zeilen mit ~ am Anfang sind Zettel),
+  // eine Frage und Auswahlmöglichkeiten (to = Nummer des nächsten Kapitels).
+  var chapters = {
+    1: {
+      title: "Kapitel 1 – Ein geheimnisvoller Morgen",
+      text: [
+        "Es ist Heiligabend. Draußen fallen dicke Schneeflocken vom Himmel. Mia und Ben sitzen gemütlich im Wohnzimmer. Der Weihnachtsbaum leuchtet und unter ihm liegen viele bunte Geschenke.",
+        "Doch plötzlich ruft Mia: „Oh nein! Das goldene Glöckchen ist weg!“",
+        "Jedes Jahr hängt Mama das Glöckchen an den Weihnachtsbaum. Es soll an Weihnachten Glück bringen.",
+        "„Wir müssen es finden!“, sagt Ben.",
+        "Mia entdeckt einen kleinen Zettel auf dem Teppich. Darauf steht:",
+        "~„Sucht dort, wo es warm ist und das Feuer knistert.“"
+      ],
+      question: "Wo müssen die Kinder jetzt suchen?",
+      choices: [
+        { to: 2, label: "Weiter bei Kapitel 2: am Kamin" },
+        { to: 3, label: "Weiter bei Kapitel 3: in der Küche" }
+      ]
+    },
+    2: {
+      title: "Kapitel 2 – Am Kamin",
+      text: [
+        "Ben schaut hinter den Kamin. Dort liegen nur ein paar Holzscheite. Mia entdeckt aber etwas anderes: kleine Fußspuren im Staub!",
+        "„Die sehen aus wie winzige Schuhe“, flüstert sie.",
+        "Neben den Fußspuren liegt eine rote Schleife. Sie sieht genauso aus wie die Schleife an den Geschenken.",
+        "Plötzlich hören die Kinder ein leises Klingeln. Es kommt von draußen!",
+        "Auf der Fensterbank liegt ein kleiner Tannenzweig."
+      ],
+      question: "Was machen die Kinder als Nächstes?",
+      choices: [
+        { to: 4, label: "Weiter bei Kapitel 4: Sie schauen aus dem Fenster." },
+        { to: 5, label: "Weiter bei Kapitel 5: Sie gehen ins Kinderzimmer." }
+      ]
+    },
+    3: {
+      title: "Kapitel 3 – In der Küche",
+      text: [
+        "Mia und Ben laufen in die Küche. Auf dem Tisch stehen Plätzchen und eine Tasse Kakao.",
+        "Neben dem Teller entdecken sie einen kleinen Zettel.",
+        "Darauf steht:",
+        "~„Ich bin klein und weiß. Ich wohne draußen und habe eine Karottennase.“",
+        "„Das muss ein Schneemann sein!“, ruft Ben."
+      ],
+      question: "Wo sollen die Kinder suchen?",
+      choices: [
+        { to: 6, label: "Weiter bei Kapitel 6: im Garten" },
+        { to: 5, label: "Weiter bei Kapitel 5: im Kinderzimmer" }
+      ]
+    },
+    4: {
+      title: "Kapitel 4 – Ein kleiner Besucher",
+      text: [
+        "Mia schaut aus dem Fenster. Im Garten steht ein kleiner Schneemann. Auf seinem Kopf sitzt eine rote Mütze.",
+        "Doch was ist das? Neben dem Schneemann bewegt sich etwas im Schnee!",
+        "Ein kleiner Wichtel schaut hinter einem Busch hervor. In seiner Hand hält er etwas Goldenes.",
+        "„Da ist das Glöckchen!“, ruft Mia.",
+        "Der Wichtel lächelt und winkt den Kindern zu."
+      ],
+      question: "Wie geht die Geschichte weiter?",
+      choices: [
+        { to: 7, label: "Weiter bei Kapitel 7: Die Kinder gehen in den Garten." },
+        { to: 6, label: "Weiter bei Kapitel 6: Die Kinder suchen im Garten." }
+      ]
+    },
+    5: {
+      title: "Kapitel 5 – Das Kinderzimmer",
+      text: [
+        "Die Kinder schauen im Kinderzimmer nach. Auf dem Bett sitzt ihr Kuscheltier, ein kleiner Teddybär.",
+        "Um seinen Hals hängt eine rote Schleife. Doch das Glöckchen ist nicht da.",
+        "Unter dem Bett entdecken sie ein paar Krümel und einen winzigen grünen Knopf.",
+        "„Vielleicht war hier ein Wichtel!“, sagt Ben."
+      ],
+      question: "Aber wo könnte er sein?",
+      choices: [
+        { to: 4, label: "Weiter bei Kapitel 4: am Fenster" },
+        { to: 3, label: "Weiter bei Kapitel 3: in der Küche" }
+      ]
+    },
+    6: {
+      title: "Kapitel 6 – Im Garten",
+      text: [
+        "Mia und Ben ziehen ihre warmen Jacken und Stiefel an. Im Garten entdecken sie den Schneemann mit der roten Mütze.",
+        "Hinter ihm liegt ein kleiner Sack. Darin sind Nüsse, Plätzchen und ein Brief.",
+        "Im Brief steht:",
+        "~„Das Glöckchen ist bei mir. Ich bin ein kleiner Helfer vom Weihnachtsmann.“",
+        "„Ein Wichtel!“, rufen beide Kinder.",
+        "Plötzlich hören sie ein Kichern hinter dem Busch."
+      ],
+      question: "Wo müssen sie jetzt hin?",
+      choices: [
+        { to: 7, label: "Weiter bei Kapitel 7: zum Busch" },
+        { to: 5, label: "Weiter bei Kapitel 5: ins Kinderzimmer" }
+      ]
+    },
+    7: {
+      title: "Kapitel 7 – Das Weihnachtswunder",
+      text: [
+        "Hinter dem Busch sitzt ein kleiner Wichtel. In seinen Händen hält er das goldene Glöckchen.",
+        "„Ich wollte es nur kurz anschauen“, sagt er. „Es hat so schön geglänzt! Dann habe ich mich im Haus verlaufen.“",
+        "Mia und Ben müssen lachen.",
+        "„Du darfst es gerne anschauen“, sagt Mia. „Aber jetzt gehört es wieder an den Weihnachtsbaum.“",
+        "Gemeinsam gehen sie ins Wohnzimmer. Der Wichtel hängt das Glöckchen ganz oben an den Baum.",
+        "Da klingelt es leise und wunderschön.",
+        "„Frohe Weihnachten!“, ruft der Wichtel und verschwindet mit einem kleinen Funkeln.",
+        "Mia und Ben kuscheln sich auf das Sofa. Nun kann Weihnachten endlich beginnen!"
+      ],
+      end: "Ende 🎅",
+      choices: [
+        { to: 1, label: "Nochmal von vorn lesen" },
+        { home: true, label: "Zur Startseite" }
+      ]
+    }
+  };
 
-  function renderPassage() {
-    passageEl.textContent = passages[current];
-    progressEl.textContent = 'Abschnitt ' + (current + 1) + ' von ' + passages.length;
-    prevBtn.hidden = current === 0;
-    nextBtn.textContent = current === passages.length - 1 ? 'Fertig' : 'Weiter';
+  var visited = [];
+  var currentChapter = 1;
+  var titleEl = document.getElementById('chapterTitle');
+  var textEl = document.getElementById('chapterText');
+  var choicesEl = document.getElementById('choices');
+  var prevBtn = document.getElementById('prevBtn');
+
+  function addP(text, cls) {
+    var p = document.createElement('p');
+    if (cls) p.className = cls;
+    p.textContent = text;
+    textEl.appendChild(p);
   }
 
-  nextBtn.addEventListener('click', function () {
-    if (current < passages.length - 1) { current++; renderPassage(); }
-    else { show('start'); }
-  });
+  function renderChapter() {
+    var c = chapters[currentChapter];
+    titleEl.textContent = c.title;
+    textEl.innerHTML = '';
+    choicesEl.innerHTML = '';
+    c.text.forEach(function (line) {
+      if (line.charAt(0) === '~') addP(line.slice(1), 'note');
+      else addP(line);
+    });
+    if (c.question) addP(c.question, 'question');
+    if (c.end) addP(c.end, 'end');
+    c.choices.forEach(function (ch) {
+      var b = document.createElement('button');
+      b.className = 'btn';
+      b.textContent = ch.label;
+      b.addEventListener('click', function () {
+        if (ch.home) { show('start'); return; }
+        if (ch.to === 1 && !c.question) visited = []; else visited.push(currentChapter);
+        currentChapter = ch.to;
+        renderChapter();
+        window.scrollTo(0, 0);
+      });
+      choicesEl.appendChild(b);
+    });
+    prevBtn.hidden = visited.length === 0;
+  }
+
   prevBtn.addEventListener('click', function () {
-    if (current > 0) { current--; renderPassage(); }
+    if (visited.length) {
+      currentChapter = visited.pop();
+      renderChapter();
+      window.scrollTo(0, 0);
+    }
   });
 
   function show(name) {
-    if (name === 'story') { current = 0; renderPassage(); }
+    if (name === 'story') { visited = []; currentChapter = 1; renderChapter(); }
     for (var key in views) views[key].classList.toggle('active', key === name);
     document.body.classList.toggle('on-story', name === 'story');
     window.scrollTo(0, 0);
-    try { history.replaceState(null, '', name === 'story' ? '#lesespur' : location.pathname); } catch (e) {}
+    try { window.history.replaceState(null, '', name === 'story' ? '#lesespur' : location.pathname); } catch (e) {}
   }
 
   document.getElementById('goStory').addEventListener('click', function () { show('story'); });
